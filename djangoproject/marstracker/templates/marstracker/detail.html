@@ -1,0 +1,7 @@
+{{ game }}
+<h1>{{ game.id }}</h1>
+<ul>
+{% for player in game.player_set.all %}
+    <li>{{ player.player_name }}</li>
+{% endfor %}
+</ul>
