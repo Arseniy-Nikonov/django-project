@@ -1,9 +1,9 @@
-{% if latest_game_list %}
+{% if player_list %}
     <ul>
-    {% for game in latest_game_list %}
-        <li><a href="{% url 'marstracker:detail' game.id %}">{{ game.player_name }}</a></li>
+    {% for player in player_list %}
+        {{ player.first_name}} {{player.last_name}} {{player.reg_date}}
     {% endfor %}
     </ul>
 {% else %}
-    <p>No games are available.</p>
+    <p>No players are registered</p>
 {% endif %}
