@@ -18,7 +18,7 @@ from django.urls import path,include
 
 urlpatterns = [
     path('myprojects/', include('myprojects.urls')),
-    path('marstracker/', include('marstracker.urls')),
+    path('marstracker/', include('marstracker.urls'),name = 'marstracker'),
     path('admin/', admin.site.urls),
     
 ]

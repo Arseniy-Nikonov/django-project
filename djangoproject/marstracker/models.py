@@ -8,24 +8,25 @@ class Player(models.Model):
     def __str__(self):
         return self.first_name +' '+ self.last_name
 
-class GameStatistics(models.Model):
-    pub_date = models.DateField('date played',default=datetime.now)
-    players = models.ManyToManyField(Player)
-    def __str__(self):
-        output = ''
-        for p in self.players.all():
-            output = output + p.first_name + " " + p.last_name + " "
-        return output
 
-class PlayerStatistics(models.Model):
+class GameResults(models.Model):
     final_score = models.IntegerField(default = 0)
     milestones_score = models.IntegerField(default = 0)
     awards_score = models.IntegerField(default = 0)
     tr_score = models.IntegerField(default = 0)
     card_score = models.IntegerField(default = 0)
     board_score = models.IntegerField(default = 0)
-    pub_date = models.DateField('date played')
+    pub_date = models.DateField('date played',default=datetime.now)
     def __str__(self):
-        return self.player_name
+        return str(self.final_score)
 
-
+class Game(models.Model):
+    pub_date = models.DateField('date played',default=datetime.now)
+    players = models.ManyToManyField(Player)
+    game_results = models.OneToOneField(GameResults,on_delete=models.CASCADE,null=True)
+    
+    def __str__(self):
+        output = ''
+        for p in self.players.all():
+            output = output + p.first_name + " " + p.last_name + " "
+        return output

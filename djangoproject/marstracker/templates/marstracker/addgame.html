@@ -1,0 +1,11 @@
+<form action = {% url 'marstracker:addgame' %} method = "post">
+    {% csrf_token %}
+    <p><label for="inp01">First name</label>
+    <input type="text" name="firstname" id="inp01" size="40"></p>
+    <p><label for="inp02">Last name</label>
+    <input type="text" name="lastname" id="inp02" size="40"></p>
+    <p><label for="inp03">Final score</label>
+    <input type="number" name="finalscore" id="inp03" size="40"></p>
+    <input type="submit" name="dopost" value="Submit"/>
+    <input type="button" onclick="location.href='{% url 'marstracker:index' %}'" value="Back" />
+</form>
