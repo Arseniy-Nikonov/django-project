@@ -29,4 +29,8 @@ class Game(models.Model):
         output = ''
         for p in self.players.all():
             output = output + p.first_name + " " + p.last_name + " "
+        try:
+            output +=" Final score:"+ str(self.game_results.final_score)
+        except:
+            return output
         return output

@@ -1,9 +1,9 @@
-{{ games }}
+{% if object %}
 
-<ul>
-{% for game in games %}
-    <li>{{ game.pub_date }} {% for player in game.players.all%} {{player}} {% endfor %}</li>
-{% endfor %}
-</ul>
+{{ object }}
+
+{% endif%}
+<br>
+<input type="button" onclick="location.href='{% url 'marstracker:index' %}'" value="Back" />
 
 

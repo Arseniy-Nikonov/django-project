@@ -1,7 +1,12 @@
-{% if player_list %}
+{% if latest_game_list %}
     <ul>
-    {% for player in player_list %}
-        {{ player.first_name}} {{player.last_name}} {{player.reg_date}}
+    {% for game in latest_game_list %}
+    Game number:<a href="/marstracker/{{game.id}}">{{game.id}} </a> Game date:{{game.pub_date}}
+    <p>    
+        {%for player in game.players.all%}
+            <li>First name: {{player.first_name}} Last name: {{player.last_name}}</li>
+        {% endfor%}
+    </p>   
     {% endfor %}
     </ul>
 {% else %}

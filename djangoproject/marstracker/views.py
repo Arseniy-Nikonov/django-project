@@ -1,32 +1,44 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404,redirect
 from django.template import loader
-from django.http import HttpResponse,Http404
+from django.http import HttpResponse,Http404,HttpResponseNotFound
+from django.urls import reverse
+from django.views import generic
 from .models import Game,Player,GameResults
 
-def index(request):
-    player_list = Player.objects.order_by('-reg_date')
-    template = loader.get_template('marstracker/index.html')
-    context = {'player_list':player_list}
-    return HttpResponse(template.render(context,request))
-       #return render(request, 'marstracker/index.html', context)
-    # latest_game_list = GameStatistics.objects.order_by('-pub_date')
-    # template = loader.get_template('marstracker/index.html')
-    # context = {'latest_gamer_list':latest_game_list}
-    # return HttpResponse(template.render(context,request))
-    #return render(request, 'marstracker/index.html', context)
 
-def detail(request, game_id):
-    try:
-        games = Game.objects.all()
-    except Game.DoesNotExist:
-        raise Http404("Game does not exist")
-    return render(request, 'marstracker/detail.html', {'games': games})
-    #def detail(request, question_id):
-    #question = get_object_or_404(Question, pk=question_id)
-    # return render(request, 'polls/detail.html', {'question': question})
+class IndexView(generic.ListView):
+    template_name = 'marstracker/index.html'
+    context_object_name = 'latest_game_list'
+    
+    def get_queryset(self):
+        "Return the last five games"
+        return Game.objects.order_by('-pub_date')[:5]
+    
 
-def gamestatistics(request, game_id):
-    return HttpResponse("You're looking at the results of game %s." % game_id)
+# def detail(request, game_id):
+#     try:
+#         games = Game.objects.all()
+#     except Game.DoesNotExist:
+#         raise Http404("Game does not exist")
+#     return render(request, 'marstracker/detail.html', {'games': games})
+
+class DetailView(generic.DetailView):
+    model = Game
+    template_name = 'marstracker/detail.html'
+    def get_object(self, queryset=None):
+        try:
+            response = super().get_object(queryset=queryset)
+        except Http404:
+            # Redirect to a different page if the object was not found
+            # response = self.handle_not_found()
+            return "You've attempted to access game index that does not exist in the database"
+        return response
+    
+    # def handle_not_found(self):
+    #     # Customize the behavior when the object is not found
+    #     # Return an HttpResponse or render a template
+    #     return HttpResponseNotFound("The requested object was not found.")
+
 
 def addgame(request):
     if request.method == 'POST':
@@ -48,6 +60,6 @@ def addgame(request):
 
 
         # Redirect to a success page
-        return HttpResponse('Success!')
+        return render(request, 'marstracker/addgame.html')
     
     return render(request, 'marstracker/addgame.html')
