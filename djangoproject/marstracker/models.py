@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from django.urls import reverse
 
 class GameResults(models.Model):
     final_score = models.IntegerField(default = 0)
@@ -24,7 +25,8 @@ class Player(models.Model):
     def __str__(self):
         return self.first_name +' '+ self.last_name
 
-
+    def get_absolute_url(self):
+        return reverse('marstracker:index')
 
 
 class Game(models.Model):
@@ -34,3 +36,4 @@ class Game(models.Model):
     
     def __str__(self):
         return str(self.players)
+    

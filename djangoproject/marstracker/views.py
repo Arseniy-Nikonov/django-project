@@ -1,8 +1,9 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from django.template import loader
 from django.http import HttpResponseRedirect,HttpResponse,Http404,HttpResponseNotFound
-from django.urls import reverse
+from django.urls import reverse,reverse_lazy
 from django.views import generic
+from django.views.generic.edit import CreateView, DeleteView, UpdateView,FormView
 from .models import Game,Player,GameResults
 from .forms import PlayerForm
 
@@ -13,14 +14,6 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         "Return the last five games"
         return Game.objects.order_by('-pub_date')[:50]
-    
-
-# def detail(request, game_id):
-#     try:
-#         games = Game.objects.all()
-#     except Game.DoesNotExist:
-#         raise Http404("Game does not exist")
-#     return render(request, 'marstracker/detail.html', {'games': games})
 
 class DetailView(generic.DetailView):
     model = Game
@@ -50,9 +43,8 @@ def addgame(request):
         game_id = 1
         game = Game()
         game.save()
-
-    # return render(request, 'marstracker/detail.html', {'pk':game_id})
     return HttpResponseRedirect(reverse('marstracker:detail',kwargs={'pk': game_id}))
+
 def addplayer(request,game_id):
 # if this is a POST request we need to process the form data
     if request.method == 'POST':
@@ -83,3 +75,36 @@ def addplayer(request,game_id):
         form = PlayerForm()
 
     return render(request, 'marstracker/addplayer.html', {'form': form,'id': game_id} )
+
+class PlayerCreateView(FormView):
+    #model = Player
+    #fields = ['first_name','last_name']
+    #ields = ['first_name','last_name','final_score','milestones_score','awards_score','tr_score','card_score','board_score']
+    form_class = PlayerForm
+    template_name = 'marstracker/player_add.html'
+    success_url = reverse_lazy('marstracker:index')
+    def form_valid(self, form):
+        game_results = GameResults(final_score = form.cleaned_data['final_score'], milestones_score = form.cleaned_data['milestones_score'], awards_score = form.cleaned_data['awards_score'], tr_score = form.cleaned_data['tr_score'],card_score = form.cleaned_data['card_score'],board_score = form.cleaned_data['board_score'])
+        game_results.save()
+        player = Player(first_name = form.cleaned_data['first_name'], last_name = form.cleaned_data['last_name'])
+        player.save()
+
+        return super().form_valid(form)
+class PlayerUpdateView(UpdateView):
+    model = Player
+    fields = ['first_name','last_name']
+    template_name = 'marstracker/player_add.html'
+
+class PlayerDeleteView(DeleteView):
+    model = Player
+    success_url = reverse_lazy('marstracker:index')
+    template_name = 'marstracker/player_confirm_delete.html'
+
+
+class PlayerList(generic.ListView):
+    template_name = 'marstracker/player_list.html'
+    context_object_name = 'player_list'
+    
+    def get_queryset(self):
+        "Return the last fifty registered plaers"
+        return Player.objects.order_by('-reg_date')[:50]
