@@ -1,9 +1,24 @@
 {% if object %}
 
-{{ object }}
+Game number: {{ object.id }} 
+
+{% for player in object.players.all%}
+<li>{{player}}  Score:{{player.scores.final_score}} 
+    Publication date:{{player.reg_date}}
+
+</li>
+
+{%endfor%}
+
 
 {% endif%}
+
 <br>
 <input type="button" onclick="location.href='{% url 'marstracker:index' %}'" value="Back" />
+{% if object %}
 
+<a href="/marstracker/{{object.id}}/addplayer">Add a player</a>
+{% else %}
 
+<a href="/marstracker/{{object.id}}/addplayer">Add a player</a>
+{% endif%}

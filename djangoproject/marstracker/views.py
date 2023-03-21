@@ -1,10 +1,10 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from django.template import loader
-from django.http import HttpResponse,Http404,HttpResponseNotFound
+from django.http import HttpResponseRedirect,HttpResponse,Http404,HttpResponseNotFound
 from django.urls import reverse
 from django.views import generic
 from .models import Game,Player,GameResults
-
+from .forms import PlayerForm
 
 class IndexView(generic.ListView):
     template_name = 'marstracker/index.html'
@@ -41,25 +41,39 @@ class DetailView(generic.DetailView):
 
 
 def addgame(request):
+    model = Game
+    game = Game()
+    game.save()
+
+    return render(request, 'marstracker/detail.html')
+
+def addplayer(request,game_id):
+# if this is a POST request we need to process the form data
     if request.method == 'POST':
-        # Get the post data from the form
-        first_name = request.POST.get('firstname')
-        last_name = request.POST.get('lastname')
-        final_score = request.POST.get('finalscore')
+        # create a form instance and populate it with data from the request:
+        form = PlayerForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            game_results = GameResults(final_score = form.cleaned_data['final_score'], milestones_score = form.cleaned_data['milestones_score'], awards_score = form.cleaned_data['awards_score'], tr_score = form.cleaned_data['tr_score'],card_score = form.cleaned_data['card_score'],board_score = form.cleaned_data['board_score'])
+            game_results.save()
+            player = Player(first_name = form.cleaned_data['first_name'], last_name = form.cleaned_data['last_name'])
+            game = Game()
+            player.save()
+            try:
+                Game.objects.get(pk = game_id)
+                game = Game.objects.get(pk = game_id)
+                game.players.add(player)
+                game.save()
+            except:
+                game = Game()
+                game_id = game.id
+                game.players.add(player)
+                game.save()
+            # redirect to a new URL:
+            return HttpResponseRedirect(reverse('marstracker:index'))
 
-        # Create a new object with the acquired data
-        player = Player(first_name=first_name,last_name=last_name )
-        player.save()
-        game_results = GameResults(final_score=final_score)
-        game_results.save()
-        game = Game(game_results=game_results)
-        game.save()
+# if a GET (or any other method) we'll create a blank form
+    else:
+        form = PlayerForm()
 
-        game.players.add(player)
- 
-
-
-        # Redirect to a success page
-        return render(request, 'marstracker/addgame.html')
-    
-    return render(request, 'marstracker/addgame.html')
+    return render(request, 'marstracker/addplayer.html', {'form': form,'id': game_id} )
