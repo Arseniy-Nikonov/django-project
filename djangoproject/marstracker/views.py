@@ -12,7 +12,7 @@ class IndexView(generic.ListView):
     
     def get_queryset(self):
         "Return the last five games"
-        return Game.objects.order_by('-pub_date')[:5]
+        return Game.objects.order_by('-pub_date')[:50]
     
 
 # def detail(request, game_id):
@@ -41,12 +41,18 @@ class DetailView(generic.DetailView):
 
 
 def addgame(request):
-    model = Game
-    game = Game()
-    game.save()
+    try:
+        game = Game.objects.latest('pk')
+        game_id = game.pk + 1
+        game = Game()
+        game.save()
+    except:
+        game_id = 1
+        game = Game()
+        game.save()
 
-    return render(request, 'marstracker/detail.html')
-
+    # return render(request, 'marstracker/detail.html', {'pk':game_id})
+    return HttpResponseRedirect(reverse('marstracker:detail',kwargs={'pk': game_id}))
 def addplayer(request,game_id):
 # if this is a POST request we need to process the form data
     if request.method == 'POST':
