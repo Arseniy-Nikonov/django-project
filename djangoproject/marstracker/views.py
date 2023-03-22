@@ -15,73 +15,6 @@ class IndexView(generic.ListView):
         "Return the last five games"
         return Game.objects.order_by('-pub_date')[:50]
 
-class DetailView(generic.DetailView):
-    model = Game
-    template_name = 'marstracker/detail.html'
-    def get_object(self, queryset=None):
-        try:
-            response = super().get_object(queryset=queryset)
-        except Http404:
-            # Redirect to a different page if the object was not found
-            # response = self.handle_not_found()
-            return "You've attempted to access game index that does not exist in the database"
-        return response
-    
-    # def handle_not_found(self):
-    #     # Customize the behavior when the object is not found
-    #     # Return an HttpResponse or render a template
-    #     return HttpResponseNotFound("The requested object was not found.")
-
-
-def addgame(request):
-    try:
-        game = Game.objects.latest('pk')
-        game_id = game.pk + 1
-        game = Game()
-        game.save()
-    except:
-        game_id = 1
-        game = Game()
-        game.save()
-    return HttpResponseRedirect(reverse('marstracker:detail',kwargs={'pk': game_id}))
-
-def addplayer(request,game_id):
-# if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = PlayerForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-
-            player = Player(first_name = form.cleaned_data['first_name'], last_name = form.cleaned_data['last_name'])
-            game = Game()
-            player.save()
-            game_results = GameResults(final_score = form.cleaned_data['final_score'], milestones_score = form.cleaned_data['milestones_score'], awards_score = form.cleaned_data['awards_score'], tr_score = form.cleaned_data['tr_score'],card_score = form.cleaned_data['card_score'],board_score = form.cleaned_data['board_score'],player=player)
-            game_results.save()
-            try:
-                Game.objects.get(pk = game_id)
-                game = Game.objects.get(pk = game_id)
-                game.players.add(player)
-                game.save()
-            except:
-                game = Game()
-                game_id = game.id
-                game.players.add(player)
-                game.save()
-            # redirect to a new URL:
-            return HttpResponseRedirect(reverse('marstracker:index'))
-
-# if a GET (or any other method) we'll create a blank form
-    else:
-        form = PlayerForm()
-
-    return render(request, 'marstracker/addplayer.html', {'form': form,'id': game_id} )
-
-# class PlayerCreateView(FormView):
-#     form_class = PlayerForm
-#     template_name = 'marstracker/player_add.html'
-#     success_url = reverse_lazy('marstracker:player-list')
-
 class PlayerCreateView(CreateView):
     model = Player
     template_name = 'marstracker/player_add.html'
@@ -131,8 +64,48 @@ class GameCreateView(CreateView):
 
 class GameDetailView(generic.DetailView):
     pass
-class GameUpdateView(UpdateView):
-    pass
 
+class GameUpdateView(FormView):
+
+    form_class = PlayerForm
+    template_name = 'marstracker/game_update.html'
+    success_url = reverse_lazy('marstracker:game-list')
+    
+    def get_context_data(self, **kwargs):
+        
+        return super().get_context_data(**kwargs)
+    
+    def get_initial(self):
+        game_id = self.kwargs['game']
+        player_id = self.kwargs['player']
+        game = Game.objects.get(pk = game_id)
+        player = Player.objects.get(pk = player_id)
+        game_results = GameResults.objects.get(player = player_id,game = game_id)
+        # Return the initial data for the form
+        return {'final_score': game_results.final_score,
+                'milestones_score': game_results.milestones_score,
+                'awards_score': game_results.awards_score,
+                'tr_score': game_results.tr_score,
+                'card_score': game_results.card_score,
+                'board_score': game_results.board_score
+                }
+
+    def form_valid(self, form, *args, **kwargs):
+        game_id = self.kwargs['game']
+        player_id = self.kwargs['player']
+        game = Game.objects.get(pk = game_id)
+        player = Player.objects.get(pk = player_id)
+        game_results = GameResults.objects.get(player = player,game = game)
+        player = form.cleaned_data['player'][0]
+        game_results.final_score = form.cleaned_data['final_score']
+        game_results.milestones_score = form.cleaned_data['milestones_score']
+        game_results.awards_score = form.cleaned_data['awards_score']
+        game_results.tr_score = form.cleaned_data['tr_score']
+        game_results.card_score = form.cleaned_data['card_score']
+        game_results.board_score = form.cleaned_data['board_score']
+        game_results.player = player
+        game_results.save()
+        return super().form_valid(form)
+    
 class GameDeleteView(DeleteView):
     pass

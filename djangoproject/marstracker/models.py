@@ -10,9 +10,6 @@ class Player(models.Model):
     first_name = models.CharField(max_length = 50)
     last_name = models.CharField(max_length = 50)
     reg_date = models.DateField('Registration day',default=datetime.now)
-    #scores = models.ForeignKey(GameResults,on_delete=models.CASCADE,null=True)
-
-   
 
     def __str__(self):
         return self.first_name +' '+ self.last_name
@@ -39,6 +36,7 @@ class GameResults(models.Model):
     board_score = models.IntegerField(default = 0)
     player = models.ForeignKey(Player,on_delete=models.CASCADE,null=True)
     game = models.ForeignKey(Game,on_delete=models.CASCADE,null=True)
-    
+    class Meta:
+        unique_together = ('player', 'game')
     def __str__(self):
         return str(self.game) + ' ' + str(self.player)
