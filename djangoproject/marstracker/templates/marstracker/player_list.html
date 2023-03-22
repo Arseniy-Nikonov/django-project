@@ -1,9 +1,16 @@
 {% if player_list %}
     <ul>
     {% for player in player_list %}
-    <li>First name: {{player.first_name}} Last name: {{player.last_name}}</li>
-    {% endfor %}
+        <li>First name: {{player.first_name}} Last name: {{player.last_name}} 
+            <a href = "{%url 'marstracker:player-update' player.id %}">Edit</a>
+            <a href = "{%url 'marstracker:player-delete' player.id %}">Delete</a>
+        </li>
+        
+    {% endfor %}    
     </ul>
 {% else %}
     <p>No players are registered</p>
 {% endif %}
+
+<a href="{% url 'marstracker:player-add' %}"> Add player</a>
+<a href="{% url 'marstracker:index' %}"> Back</a>

@@ -3,10 +3,13 @@
 Game number: {{ object.id }} 
 
 {% for player in object.players.all%}
-<li>{{player}}  Score:{{player.scores.final_score}} 
+    <li><p>{{player}}  
+        {% for score in player.scores.all%}
+            <li><p>{{score}}</p></li>
+        {% endfor%}
     Publication date:{{player.reg_date}}
 
-</li>
+    </p></li>
 
 {%endfor%}
 

@@ -52,11 +52,12 @@ def addplayer(request,game_id):
         form = PlayerForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            game_results = GameResults(final_score = form.cleaned_data['final_score'], milestones_score = form.cleaned_data['milestones_score'], awards_score = form.cleaned_data['awards_score'], tr_score = form.cleaned_data['tr_score'],card_score = form.cleaned_data['card_score'],board_score = form.cleaned_data['board_score'])
-            game_results.save()
+
             player = Player(first_name = form.cleaned_data['first_name'], last_name = form.cleaned_data['last_name'])
             game = Game()
             player.save()
+            game_results = GameResults(final_score = form.cleaned_data['final_score'], milestones_score = form.cleaned_data['milestones_score'], awards_score = form.cleaned_data['awards_score'], tr_score = form.cleaned_data['tr_score'],card_score = form.cleaned_data['card_score'],board_score = form.cleaned_data['board_score'],player=player)
+            game_results.save()
             try:
                 Game.objects.get(pk = game_id)
                 game = Game.objects.get(pk = game_id)
@@ -76,20 +77,17 @@ def addplayer(request,game_id):
 
     return render(request, 'marstracker/addplayer.html', {'form': form,'id': game_id} )
 
-class PlayerCreateView(FormView):
-    #model = Player
-    #fields = ['first_name','last_name']
-    #ields = ['first_name','last_name','final_score','milestones_score','awards_score','tr_score','card_score','board_score']
-    form_class = PlayerForm
-    template_name = 'marstracker/player_add.html'
-    success_url = reverse_lazy('marstracker:index')
-    def form_valid(self, form):
-        game_results = GameResults(final_score = form.cleaned_data['final_score'], milestones_score = form.cleaned_data['milestones_score'], awards_score = form.cleaned_data['awards_score'], tr_score = form.cleaned_data['tr_score'],card_score = form.cleaned_data['card_score'],board_score = form.cleaned_data['board_score'])
-        game_results.save()
-        player = Player(first_name = form.cleaned_data['first_name'], last_name = form.cleaned_data['last_name'])
-        player.save()
+# class PlayerCreateView(FormView):
+#     form_class = PlayerForm
+#     template_name = 'marstracker/player_add.html'
+#     success_url = reverse_lazy('marstracker:player-list')
 
-        return super().form_valid(form)
+class PlayerCreateView(CreateView):
+    model = Player
+    template_name = 'marstracker/player_add.html'
+    fields = ['first_name','last_name']
+    success_url = reverse_lazy('marstracker:player-list')
+
 class PlayerUpdateView(UpdateView):
     model = Player
     fields = ['first_name','last_name']
@@ -97,7 +95,7 @@ class PlayerUpdateView(UpdateView):
 
 class PlayerDeleteView(DeleteView):
     model = Player
-    success_url = reverse_lazy('marstracker:index')
+    success_url = reverse_lazy('marstracker:player-list')
     template_name = 'marstracker/player_confirm_delete.html'
 
 
@@ -108,3 +106,33 @@ class PlayerList(generic.ListView):
     def get_queryset(self):
         "Return the last fifty registered plaers"
         return Player.objects.order_by('-reg_date')[:50]
+
+class GameList(generic.ListView):
+    template_name = 'marstracker/game_list.html'
+    context_object_name = 'game_list'
+    
+    def get_queryset(self):
+        "Return all games"
+        return Game.objects.all()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        players = Player.objects.all()
+        game_results = GameResults.objects.all()
+        context['game_results'] = game_results
+        context['players'] = players
+        return context
+    
+class GameCreateView(CreateView):
+    model = Game
+    fields = ['map_type']
+    template_name = 'marstracker/game_add.html'
+    success_url = reverse_lazy('marstracker:game-list')
+
+class GameDetailView(generic.DetailView):
+    pass
+class GameUpdateView(UpdateView):
+    pass
+
+class GameDeleteView(DeleteView):
+    pass

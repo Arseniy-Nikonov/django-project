@@ -1,17 +1,3 @@
-{% if latest_game_list %}
-    <ul>
-    {% for game in latest_game_list %}
-    Game number:<a href="/marstracker/{{game.id}}">{{game.id}} </a> Game date:{{game.pub_date}}
-    <p>    
-        {%for player in game.players.all%}
-            <li>First name: {{player.first_name}} Last name: {{player.last_name}}</li>
-        {% endfor%}
-    </p>   
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No games are registered</p>
-{% endif %}
-
-<a href="{% url 'marstracker:addgame' %}">Add game</a>
-<a href="{% url 'marstracker:player-add' %}">Add player</a>
+<a href="{% url 'marstracker:game-list' %}">List of games</a>
+<br>
+<a href="{% url 'marstracker:player-list' %}">List of players</a>

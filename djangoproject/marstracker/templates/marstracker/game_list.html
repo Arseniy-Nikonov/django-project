@@ -1,0 +1,21 @@
+{% if game_list %}
+
+    {% for game in game_list%}
+        <p>
+        {{game}}
+
+        {% for game_result in game_results%}
+            {% if game.id == game_result.game_id %}
+                <li>Player: {{game_result.player}} Final score: {{game_result.final_score}} </p>
+            {% endif %}
+        {% endfor %}
+        </p>
+    {% endfor %}
+
+{% else %}
+    <p>No games have been played</p>
+{% endif %}
+
+<br>
+<a href="{% url 'marstracker:game-add' %}"> Add game </a>
+<a href="{% url 'marstracker:index' %}"> Back</a>
