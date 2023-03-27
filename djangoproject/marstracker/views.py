@@ -5,7 +5,8 @@ from django.urls import reverse,reverse_lazy
 from django.views import generic
 from django.views.generic.edit import CreateView, DeleteView, UpdateView,FormView
 from .models import Game,Player,GameResults
-from .forms import PlayerForm
+from .forms import GameForm,PlayerForm,GamesForm
+from django.forms import formset_factory
 
 class IndexView(generic.ListView):
     template_name = 'marstracker/index.html'
@@ -57,9 +58,53 @@ class GameList(generic.ListView):
     
 class GameCreateView(CreateView):
     model = Game
-    fields = ['map_type']
+    form_class = GamesForm
     template_name = 'marstracker/game_add.html'
+
+    number_of_players = 0
+
+    def form_valid(self,form):
+        self.number_of_players = form.cleaned_data['number_of_players']
+        return super().form_valid(form)
+    def get_success_url(self) -> str:
+        success_url = reverse_lazy('marstracker:game-add-all',kwargs={'numberofplayers': self.number_of_players,'pk': Game.objects.latest('id').id})
+        return success_url
+
+def add_all_players_view(request,pk,numberofplayers):
+    print(numberofplayers,pk)
+    MyFormSet = formset_factory(PlayerForm,extra = numberofplayers)
     success_url = reverse_lazy('marstracker:game-list')
+    error_url = reverse_lazy('marstracker:form-error')
+    if request.method == "POST":
+        formset = MyFormSet(request.POST)
+        if formset.is_valid():
+            form_error = False
+            for subform in formset:
+                print(subform.cleaned_data)
+                game = Game.objects.get(pk = pk)
+                player = subform.cleaned_data['player'][0]
+                if not GameResults.objects.filter(player = player,game=game).exists():
+                    game_results = GameResults(player = player,game = game)
+                    game_results.final_score = subform.cleaned_data['final_score']
+                    game_results.milestones_score = subform.cleaned_data['milestones_score']
+                    game_results.awards_score = subform.cleaned_data['awards_score']
+                    game_results.tr_score = subform.cleaned_data['tr_score']
+                    game_results.card_score = subform.cleaned_data['card_score']
+                    game_results.board_score = subform.cleaned_data['board_score']
+                    game_results.save()
+                else: 
+                    form_error = True
+            if form_error:
+                return redirect(error_url)                       
+            else:
+                return redirect(success_url)
+    else:
+            formset = MyFormSet()
+
+    return render(request, 'marstracker/game_add_all.html', {'formset':MyFormSet})
+
+def form_error(request):
+    return render(request,'marstracker/form_error')
 
 class GameDetailView(generic.DetailView):
     model = Game
@@ -78,7 +123,7 @@ class GameDetailView(generic.DetailView):
 
 class GameUpdateView(FormView):
 
-    form_class = PlayerForm
+    form_class = GameForm
     template_name = 'marstracker/game_update.html'
     success_url = reverse_lazy('marstracker:game-list')
     
