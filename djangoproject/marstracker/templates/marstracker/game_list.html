@@ -2,14 +2,15 @@
 
     {% for game in game_list%}
         <p>
+        
         <a href = "{%url 'marstracker:game-detail' game.id %}">{{game}}</a>
-
+        {% comment %} <a href = "{%url 'marstracker:game-delete' %}" {% endcomment %}
         {% for game_result in game_results%}
             {% if game.id == game_result.game_id %}
                 <li>
                     Player: {{game_result.player}} Final score: {{game_result.final_score}} 
                     <a href = "{%url 'marstracker:game-update' game.id game_result.player.id %}">Edit</a>
-                    <a href = "{%url 'marstracker:game-delete' game.id %}">Delete</a>
+                    <a href = "{%url 'marstracker:game-delete' game_result.id %}">Delete</a>
 
                 </li>
             {% endif %}

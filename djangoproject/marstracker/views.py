@@ -31,7 +31,6 @@ class PlayerDeleteView(DeleteView):
     success_url = reverse_lazy('marstracker:player-list')
     template_name = 'marstracker/player_confirm_delete.html'
 
-
 class PlayerList(generic.ListView):
     template_name = 'marstracker/player_list.html'
     context_object_name = 'player_list'
@@ -63,6 +62,7 @@ class GameCreateView(CreateView):
     success_url = reverse_lazy('marstracker:game-list')
 
 class GameDetailView(generic.DetailView):
+
     pass
 
 class GameUpdateView(FormView):
@@ -108,4 +108,6 @@ class GameUpdateView(FormView):
         return super().form_valid(form)
     
 class GameDeleteView(DeleteView):
-    pass
+    model = GameResults
+    success_url = reverse_lazy('marstracker:game-list')
+    template_name = 'marstracker/game_confirm_delete.html'
