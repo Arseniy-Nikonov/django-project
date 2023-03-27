@@ -62,8 +62,19 @@ class GameCreateView(CreateView):
     success_url = reverse_lazy('marstracker:game-list')
 
 class GameDetailView(generic.DetailView):
+    model = Game
+    template_name = 'marstracker/game_detail.html'
+    context_object_name = 'game'
 
-    pass
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        players = Player.objects.all()
+        game_id = self.kwargs['pk']
+        game_results = GameResults.objects.all().filter(game = game_id)
+        context['game_results'] = game_results
+        context['players'] = players
+        return context
+
 
 class GameUpdateView(FormView):
 
@@ -108,6 +119,18 @@ class GameUpdateView(FormView):
         return super().form_valid(form)
     
 class GameDeleteView(DeleteView):
+    model = Game
+    success_url = reverse_lazy('marstracker:game-list')
+    template_name = 'marstracker/game_confirm_delete.html'
+
+class GameResultCreateView(CreateView):
+    model = GameResults
+    fields = ['final_score','milestones_score','awards_score','tr_score','card_score','board_score','player','game']
+    template_name = 'marstracker/game_result_add.html'
+    success_url = reverse_lazy('marstracker:game-list')
+
+
+class GameResultsDeleteView(DeleteView):
     model = GameResults
     success_url = reverse_lazy('marstracker:game-list')
     template_name = 'marstracker/game_confirm_delete.html'

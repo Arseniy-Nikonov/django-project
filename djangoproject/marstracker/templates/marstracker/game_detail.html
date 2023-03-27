@@ -1,0 +1,16 @@
+{% if game %}
+    <ul>
+    {% for game_result in game_results %}
+        <li>
+        Player: {{game_result.player}} Final score: {{game_result.final_score}}
+        TR score: {{game_result.tr_score}} Board score: {{game_result.board_score}}
+        Milestones score: {{game_result.milestones_score}} Awards score: {{game_results.awards_score}}
+        Card score: {{game_result.card_score}}
+        </li>
+    {% endfor %}
+    </ul>
+
+{% endif %}
+
+<a href="{% url 'marstracker:game-result-add' %}"> Add game </a>
+<a href="{% url 'marstracker:index' %}"> Back</a>
