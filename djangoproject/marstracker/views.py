@@ -83,8 +83,12 @@ class GameUpdateView(FormView):
     success_url = reverse_lazy('marstracker:game-list')
     
     def get_context_data(self, **kwargs):
-        
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        player_id = self.kwargs['player']
+        game_id = self.kwargs['game']
+        game_results = GameResults.objects.get(game = game_id, player = player_id)
+        context['game_result'] = game_results
+        return context
     
     def get_initial(self):
         game_id = self.kwargs['game']
@@ -114,7 +118,7 @@ class GameUpdateView(FormView):
         game_results.tr_score = form.cleaned_data['tr_score']
         game_results.card_score = form.cleaned_data['card_score']
         game_results.board_score = form.cleaned_data['board_score']
-        game_results.player = player
+        # game_results.player = player
         game_results.save()
         return super().form_valid(form)
     

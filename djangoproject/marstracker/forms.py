@@ -2,7 +2,7 @@ from django import forms
 from .models import Player
 
 class PlayerForm(forms.Form):
-    player = forms.ModelMultipleChoiceField(Player.objects.all())
+    # player = forms.ModelMultipleChoiceField(Player.objects.all())
     final_score = forms.IntegerField()
     milestones_score = forms.IntegerField()
     awards_score = forms.IntegerField()

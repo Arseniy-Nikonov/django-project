@@ -10,7 +10,7 @@
             {% if game.id == game_result.game_id %}
                 <li>
                     Player: {{game_result.player}} Final score: {{game_result.final_score}} 
-                    <a href = "{%url 'marstracker:game-update' game.id game_result.player.id %}">Edit</a>
+                    <a href = "{%url 'marstracker:game-result-update' game.id game_result.player.id %}">Edit</a>
                     <a href = "{%url 'marstracker:game-result-delete' game_result.id %}">Delete</a>
 
                 </li>
