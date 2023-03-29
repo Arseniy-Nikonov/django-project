@@ -1,0 +1,4 @@
+/djangoproject/djangoproject/__pycache__/
+/djangoproject/marstracker/__pycache__/
+/djangoproject/marstracher/migrations
+*.pyc 

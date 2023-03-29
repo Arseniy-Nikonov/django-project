@@ -1,0 +1,4 @@
+Form error:<br>
+If you've tried adding multiple entries for the same player for one game only the first one was processed.
+<br>
+<a href="{% url 'marstracker:index' %}"> Main page</a>
