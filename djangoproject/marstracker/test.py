@@ -3,6 +3,7 @@ import datetime
 from django.test import TestCase
 from django.utils import timezone
 from .models import Player
+from django.urls import reverse
 
 class PlayerTest(TestCase):
 
@@ -30,3 +31,4 @@ class PlayerTest(TestCase):
     def test_delete_player(self):
         self.player.delete()
         self.assertEqual(Player.objects.count(), 0)
+
