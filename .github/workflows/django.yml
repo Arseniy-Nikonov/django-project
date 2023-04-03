@@ -22,7 +22,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Print stuff
-      run:
+      run: |
        cd djangoproject/martstracker
        ls
     - name: Install Dependencies
