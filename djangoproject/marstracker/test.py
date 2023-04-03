@@ -3,8 +3,9 @@ import datetime
 from django.test import TestCase
 from django.utils import timezone
 from .models import Player
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.contrib.auth.models import User
+
 
 class PlayerTest(TestCase):
 
@@ -38,11 +39,12 @@ class UserAuthTest(TestCase):
         self.user = User.objects.create_user(username='testuser',password = 'testpassword')
 
     def test_login(self):
-        response = self.client.post(reverse('login'), {'username':'testuser','password':'testpassword'})
+        response = self.client.post(reverse_lazy('marstracker:login'), {'username':'testuser','password':'testpassword'})
         self.assertEqual(response.status_code,302)
-        self.assertRedirects(response,reverse('marstracker:index'))
+        self.assertTrue('_auth_user_id' in self.client.session)
+        self.assertRedirects(response,reverse_lazy('marstracker:index'))
     
     def test_login_invalid_credentials(self):
-        response = self.client.post(reverse('login'), {'username':'testuser','password':'wrongpassword'})
+        response = self.client.post(reverse_lazy('marstracker:login'), {'username':'testuser','password':'wrongpassword'})
         self.assertEqual(response.status_code,200)
-        self.assertRedirects(response,reverse('marstracker:index'))
+        self.assertFalse('_auth_user_id' in self.client.session)
