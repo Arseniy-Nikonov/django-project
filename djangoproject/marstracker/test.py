@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.utils import timezone
 from .models import Player
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 class PlayerTest(TestCase):
 
@@ -32,3 +33,16 @@ class PlayerTest(TestCase):
         self.player.delete()
         self.assertEqual(Player.objects.count(), 0)
 
+class UserAuthTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser',password = 'testpassword')
+
+    def test_login(self):
+        response = self.client.post(reverse('login'), {'username':'testuser','password':'testpassword'})
+        self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,reverse('marstracker:index'))
+    
+    def test_login_invalid_credentials(self):
+        response = self.client.post(reverse('login'), {'username':'testuser','password':'wrongpassword'})
+        self.assertEqual(response.status_code,200)
+        self.assertRedirects(response,reverse('marstracker:index'))
