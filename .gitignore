@@ -2,3 +2,4 @@
 /djangoproject/marstracker/__pycache__/
 /djangoproject/marstracher/migrations
 *.pyc 
+*.env
