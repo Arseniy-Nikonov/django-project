@@ -188,5 +188,4 @@ class GameResultsDeleteView(DeleteView):
 
 class MyLoginView(LoginView):
     template_name = 'marstracker/login.html'
-    #redirect_authenticated_user = True
     next_page = reverse_lazy('marstracker:index')
