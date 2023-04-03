@@ -3,6 +3,7 @@ from django.template import loader
 from django.http import HttpResponseRedirect,HttpResponse,Http404,HttpResponseNotFound
 from django.urls import reverse,reverse_lazy
 from django.views import generic
+from django.contrib.auth.views import LoginView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView,FormView
 from .models import Game,Player,GameResults
 from .forms import GameForm,PlayerForm,GamesForm
@@ -183,3 +184,8 @@ class GameResultsDeleteView(DeleteView):
     model = GameResults
     success_url = reverse_lazy('marstracker:game-list')
     template_name = 'marstracker/game_confirm_delete.html'
+
+
+class MyLoginView(LoginView):
+    template_name = 'marstracker/login.html'
+    next_page = reverse_lazy('marstracker:index')
