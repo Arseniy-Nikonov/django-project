@@ -1,3 +1,7 @@
+{% extends 'marstracker/base.html' %}
+{% block content %}
+
+
 {% if object %}
 
 Game number: {{ object.id }} 
@@ -25,3 +29,5 @@ Game number: {{ object.id }}
 
 <a href="/marstracker/{{object.id}}/addplayer">Add a player</a>
 {% endif%}
+
+{%endblock%}

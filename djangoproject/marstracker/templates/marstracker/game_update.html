@@ -1,3 +1,7 @@
+{% extends 'marstracker/base.html' %}
+{% block content %}
+
+
 Player: {{game_result.player}}
 <form method="post">
     {% csrf_token %}
@@ -5,3 +9,5 @@ Player: {{game_result.player}}
     <input type="submit" value="Save">
 </form> 
 <a href="{% url 'marstracker:game-list' %}"> Back</a>
+
+{% endblock %}
