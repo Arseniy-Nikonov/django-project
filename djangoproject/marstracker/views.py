@@ -3,7 +3,7 @@ from django.template import loader
 from django.http import HttpResponseRedirect,HttpResponse,Http404,HttpResponseNotFound
 from django.urls import reverse,reverse_lazy
 from django.views import generic
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView,LogoutView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView,FormView
 from .models import Game,Player,GameResults
 from .forms import GameForm,PlayerForm,GamesForm
@@ -203,3 +203,6 @@ class MyLoginView(LoginView):
     template_name = 'marstracker/login.html'
     next_page = reverse_lazy('marstracker:index')
 
+class MyLogoutView(LogoutView):
+    template_name = 'marstracker/logout.html'
+    next_page = reverse_lazy('marstracker:index')
