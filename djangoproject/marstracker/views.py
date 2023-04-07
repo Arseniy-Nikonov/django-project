@@ -9,13 +9,26 @@ from .models import Game,Player,GameResults
 from .forms import GameForm,PlayerForm,GamesForm
 from django.forms import formset_factory
 
-class IndexView(generic.ListView):
-    template_name = 'marstracker/index.html'
-    context_object_name = 'latest_game_list'
+# class IndexView(generic.ListView):
+#     template_name = 'marstracker/index.html'
+#     context_object_name = 'latest_game_list'
+#     def get_queryset(self):
+#         user = self.request.user
+#         queryset = super().get_queryset()
+#         if user.is_authenticated:
+#             queryset = queryset.filter(user=user)
+#         else:           
+#             queryset = queryset.none()
+#         return queryset
     
-    def get_queryset(self):
-        "Return the last five games"
-        return Game.objects.order_by('-pub_date')[:50]
+def index_view(request):
+
+    if request.user.is_authenticated:
+        user = request.user
+        context = {'username': user.username}
+    else:
+        context = {'nouser': 'User is not authenticated'}
+    return render(request, 'marstracker/index.html', context)
 
 class PlayerCreateView(CreateView):
     model = Player
@@ -189,3 +202,4 @@ class GameResultsDeleteView(DeleteView):
 class MyLoginView(LoginView):
     template_name = 'marstracker/login.html'
     next_page = reverse_lazy('marstracker:index')
+

@@ -1,6 +1,13 @@
 {% load static %}
+<p>Welcome, {{ username }}!</p>
+
 <link rel="stylesheet" href="{% static 'marstracker/style.css' %}">
 
 <a href="{% url 'marstracker:game-list' %}">List of games</a>
 <br>
 <a href="{% url 'marstracker:player-list' %}">List of players</a>
+<br>
+
+
+<a href="{% url 'marstracker:login' %}">Login</a>
+
