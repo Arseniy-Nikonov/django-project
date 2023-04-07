@@ -38,13 +38,14 @@
       <!-- gravatar depends on app_tags being loaded -->
       <!-- https://brobin.me/blog/2016/07/super-simple-django-gravatar/ -->
       <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-        <img style="width: 25px;" src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"/><b class="caret"></b></a>
+        <img style="width: 25px;" src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"/><b class="caret"></b></a>
         <ul class="dropdown-menu">
             <li><a href="{% url 'marstracker:logout' %}?next={% url 'marstracker:index' %}">Logout</a></li>
         </ul>
        </li>
        {% else %}
        <li><a href="{% url 'marstracker:login' %}?next={% url 'marstracker:index' %}">Login</a></li>
+       <li><a href="{% url 'marstracker:register' %}?next={% url 'marstracker:index' %}">Register</a></li>
        {% endif %}
     </ul>
   </div>

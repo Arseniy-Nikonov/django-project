@@ -6,8 +6,10 @@ from django.views import generic
 from django.contrib.auth.views import LoginView,LogoutView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView,FormView
 from .models import Game,Player,GameResults
-from .forms import GameForm,PlayerForm,GamesForm
+from .forms import GameForm,PlayerForm,GamesForm,NewUserForm
 from django.forms import formset_factory
+from django.contrib.auth import login
+from django.contrib import messages
 
 # class IndexView(generic.ListView):
 #     template_name = 'marstracker/index.html'
@@ -206,3 +208,15 @@ class MyLoginView(LoginView):
 class MyLogoutView(LogoutView):
     template_name = 'marstracker/logout.html'
     next_page = reverse_lazy('marstracker:index')
+
+def register_request(request):
+	if request.method == "POST":
+		form = NewUserForm(request.POST)
+		if form.is_valid():
+			user = form.save()
+			login(request, user)
+			messages.success(request, "Registration successful." )
+			return redirect("marstracker:index")
+		messages.error(request, "Unsuccessful registration. Invalid information.")
+	form = NewUserForm()
+	return render (request=request, template_name="marstracker/register.html", context={"register_form":form})
