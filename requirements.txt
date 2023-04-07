@@ -1,7 +1,11 @@
 asgiref==3.6.0
+beautifulsoup4==4.12.1
 certifi==2022.12.7
 charset-normalizer==3.1.0
+crispy-bootstrap4==2022.1
 Django==4.1.7
+django-bootstrap4==23.1
+django-crispy-forms==2.0
 docopt==0.6.2
 idna==3.4
 mysql-connector-python==8.0.32
@@ -10,8 +14,7 @@ pipreqs==0.4.11
 protobuf==3.20.3
 python-dotenv==1.0.0
 requests==2.28.2
+soupsieve==2.4
 sqlparse==0.4.3
 urllib3==1.26.15
 yarg==0.1.9
-django-bootstrap4
-django-crispy-forms
