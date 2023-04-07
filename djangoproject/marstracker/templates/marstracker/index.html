@@ -1,22 +1,23 @@
-{% load static %}
 
-{% if username %}
-<p>Welcome, {{ username }}!</p>
-{% endif %}
+{% extends 'marstracker/base.html' %}
+{% block title %}{{ settings.APP_NAME }}{% endblock %}
+{% block content %}
 
-<link rel="stylesheet" href="{% static 'marstracker/style.css' %}">
+    {% if username %}
+        <p>Welcome, {{ username }}!</p>
+    {% endif %}
 
-<a href="{% url 'marstracker:game-list' %}">List of games</a>
-<br>
-<a href="{% url 'marstracker:player-list' %}">List of players</a>
-<br>
+    <a href="{% url 'marstracker:game-list' %}">List of games</a>
+    <br>
+    <a href="{% url 'marstracker:player-list' %}">List of players</a>
+    <br>
+
+    {% if username %}
+        <a href="{% url 'marstracker:logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'marstracker:login' %}">Login</a>
+    {% endif %}
+
+{% endblock %}
 
 
-
-
-
-{% if username %}
-<a href="{% url 'marstracker:logout' %}">Logout</a>
-{% else %}
-<a href="{% url 'marstracker:login' %}">Login</a>
-{% endif %}
