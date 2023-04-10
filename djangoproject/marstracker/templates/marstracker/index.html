@@ -2,9 +2,8 @@
 {% extends 'marstracker/base.html' %}
 {% block title %}{{ settings.APP_NAME }}{% endblock %}
 {% block content %}
-
     {% if username %}
-        <p>Welcome, {{ username }}!</p>
+        <p>Welcome,{{ username }}!</p>
     {% endif %}
 
     <a href="{% url 'marstracker:game-list' %}">List of games</a>
