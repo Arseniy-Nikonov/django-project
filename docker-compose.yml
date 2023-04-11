@@ -1,0 +1,33 @@
+version: '3.9'
+volumes:
+  dbdata: 
+networks:
+  bridge-network: 
+    driver: bridge
+services:
+  db:
+    image: mysql
+    networks:
+      - bridge-network
+    container_name: mysqldb
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_database
+    volumes:
+      - type: volume
+        source: dbdata
+        target: /var/lib/mysql
+  web:
+    build: .
+    #command: python manage.py runserver 0.0.0.0:8000
+    # volumes:
+    #   - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - bridge-network
+    container_name: django

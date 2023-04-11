@@ -1,5 +1,5 @@
-{% load static %}
-<link rel="stylesheet" href="{% static 'marstracker/style.css' %}">
+{% extends 'marstracker/base.html' %}
+{% block content %}
 
 
 {% if player_list %}
@@ -18,3 +18,5 @@
 
 <a href="{% url 'marstracker:player-add' %}"> Add player</a>
 <a href="{% url 'marstracker:index' %}"> Back</a>
+
+{% endblock %}

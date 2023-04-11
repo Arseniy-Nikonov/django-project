@@ -1,14 +1,17 @@
 from django.urls import path
 from marstracker.views import PlayerCreateView,PlayerUpdateView,PlayerDeleteView,PlayerList
 from marstracker.views import GameList,GameCreateView,GameDeleteView,GameUpdateView,GameDetailView
-from marstracker.views import GameResultCreateView,GameResultsDeleteView,form_error,add_all_players_view
-from marstracker.views import MyLoginView
+from marstracker.views import GameResultCreateView,GameResultsDeleteView,form_error,add_all_players_view,index_view
+from marstracker.views import MyLoginView,MyLogoutView
 
 from . import views
 app_name = "marstracker"    
 urlpatterns = [
-    path('', views.IndexView.as_view(), name='index'),
+    #path('', views.IndexView.as_view(), name='index'),
+    path('',index_view , name='index'),
     path('login/',MyLoginView.as_view(),name='login'),
+    path('logout/', MyLogoutView.as_view(), name='logout'),
+    path("register", views.register_request, name="register"),
 
     path('game/',GameList.as_view(),name='game-list'),
     path('game/add/',GameCreateView.as_view(),name='game-add'),
@@ -26,6 +29,7 @@ urlpatterns = [
     path('player/<int:pk>/delete/',PlayerDeleteView.as_view(),name='player-delete'),
 
     path('formerror',form_error,name='form-error'),
+
     
 
 

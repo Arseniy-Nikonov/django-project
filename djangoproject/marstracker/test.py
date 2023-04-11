@@ -48,3 +48,17 @@ class UserAuthTest(TestCase):
         response = self.client.post(reverse_lazy('marstracker:login'), {'username':'testuser','password':'wrongpassword'})
         self.assertEqual(response.status_code,200)
         self.assertFalse('_auth_user_id' in self.client.session)
+
+class LogoutViewTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='testuser@example.com',
+            password='testpass'
+        )
+
+    def test_logout_view(self):
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse_lazy('marstracker:logout'))
+        self.assertEqual(response.status_code, 302) # check if the user was redirected
+        self.assertFalse('_auth_user_id' in self.client.session) # check if the user is logged out

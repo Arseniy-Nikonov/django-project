@@ -46,7 +46,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap4',
+    'crispy_forms',
+    'crispy_bootstrap4',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
 
 ROOT_URLCONF = 'djangoproject.urls'
 
@@ -86,9 +93,11 @@ DATABASES = {
     'default': {  
         'ENGINE': 'django.db.backends.mysql',  
         'NAME': 'test_database',  
-        'USER': 'admin',  
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),  
-        'HOST': '127.0.0.1',  
+        # 'USER': 'admin',  
+        # 'PASSWORD': os.getenv('DATABASE_PASSWORD'),  
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'mysqldb',  
         'PORT': '3306',  
         'OPTIONS': {  
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"  

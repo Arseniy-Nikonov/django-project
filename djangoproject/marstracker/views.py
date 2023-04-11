@@ -3,19 +3,34 @@ from django.template import loader
 from django.http import HttpResponseRedirect,HttpResponse,Http404,HttpResponseNotFound
 from django.urls import reverse,reverse_lazy
 from django.views import generic
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView,LogoutView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView,FormView
 from .models import Game,Player,GameResults
-from .forms import GameForm,PlayerForm,GamesForm
+from .forms import GameForm,PlayerForm,GamesForm,NewUserForm
 from django.forms import formset_factory
+from django.contrib.auth import login
+from django.contrib import messages
 
-class IndexView(generic.ListView):
-    template_name = 'marstracker/index.html'
-    context_object_name = 'latest_game_list'
+# class IndexView(generic.ListView):
+#     template_name = 'marstracker/index.html'
+#     context_object_name = 'latest_game_list'
+#     def get_queryset(self):
+#         user = self.request.user
+#         queryset = super().get_queryset()
+#         if user.is_authenticated:
+#             queryset = queryset.filter(user=user)
+#         else:           
+#             queryset = queryset.none()
+#         return queryset
     
-    def get_queryset(self):
-        "Return the last five games"
-        return Game.objects.order_by('-pub_date')[:50]
+def index_view(request):
+
+    if request.user.is_authenticated:
+        user = request.user
+        context = {'username': user.username}
+    else:
+        context = {'nouser': 'User is not authenticated'}
+    return render(request, 'marstracker/index.html', context)
 
 class PlayerCreateView(CreateView):
     model = Player
@@ -189,3 +204,19 @@ class GameResultsDeleteView(DeleteView):
 class MyLoginView(LoginView):
     template_name = 'marstracker/login.html'
     next_page = reverse_lazy('marstracker:index')
+
+class MyLogoutView(LogoutView):
+    template_name = 'marstracker/logout.html'
+    next_page = reverse_lazy('marstracker:index')
+
+def register_request(request):
+	if request.method == "POST":
+		form = NewUserForm(request.POST)
+		if form.is_valid():
+			user = form.save()
+			login(request, user)
+			messages.success(request, "Registration successful." )
+			return redirect("marstracker:index")
+		messages.error(request, "Unsuccessful registration. Invalid information.")
+	form = NewUserForm()
+	return render (request=request, template_name="marstracker/register.html", context={"register_form":form})
